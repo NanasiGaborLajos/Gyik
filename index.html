@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<title>NE NÉZZ RÁ AZ IGUÁNÁRA</title>
+
+<style>
+body {
+    margin: 0;
+    background: black;
+    color: #d4ffd4;
+    font-family: Georgia, serif;
+    overflow-x: hidden;
+}
+
+/* GLITCH */
+.glitch {
+    font-size: 3em;
+    text-align: center;
+    margin-top: 40px;
+    animation: glitch 1s infinite;
+}
+
+@keyframes glitch {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px,2px); }
+    40% { transform: translate(2px,-2px); }
+    60% { transform: translate(-1px,1px); }
+    80% { transform: translate(1px,-1px); }
+    100% { transform: translate(0); }
+}
+
+/* IGUANA */
+.iguana {
+    margin: 60px auto;
+    width: 220px;
+    height: 130px;
+    background: #2f6f2f;
+    border-radius: 120px;
+    position: relative;
+    cursor: pointer;
+}
+
+.eye {
+    width: 40px;
+    height: 40px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 40px;
+}
+
+.eye.left { left: 40px; }
+.eye.right { right: 40px; }
+
+.pupil {
+    width: 14px;
+    height: 14px;
+    background: black;
+    border-radius: 50%;
+    position: relative;
+    top: 13px;
+    left: 13px;
+}
+
+/* TEXT */
+.text {
+    text-align: center;
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+}
+
+.fragment {
+    margin: 30px 0;
+    opacity: 0.8;
+}
+
+/* CHAOS MODE */
+.chaos * {
+    animation: spin 2s infinite linear;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* FLOATING WHISPERS */
+.whisper {
+    position: fixed;
+    font-size: 0.9em;
+    opacity: 0.25;
+    pointer-events: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="glitch">AZ IGUÁNA MÁR KIVÁLASZTOTT</div>
+
+<div class="iguana" onclick="triggerChaos()">
+    <div class="eye left"><div class="pupil"></div></div>
+    <div class="eye right"><div class="pupil"></div></div>
+</div>
+
+<div class="text">
+
+    <div class="fragment">
+        Nem te találtad meg az iguánát.<br>
+        Az iguána talált meg téged.
+    </div>
+
+    <div class="fragment">
+        🦎 Ne kattints rá.<br>
+        Komolyan.<br>
+        Ez még visszafordítható.
+    </div>
+
+    <div class="fragment">
+        A szerelem stabil volt.<br>
+        Amíg ide nem jöttél.
+    </div>
+
+</div>
+
+<script>
+/* EYE TRACKING */
+document.addEventListener("mousemove", (e) => {
+    document.querySelectorAll(".pupil").forEach(pupil => {
+        const rect = pupil.parentElement.getBoundingClientRect();
+        const x = e.clientX - (rect.left + rect.width / 2);
+        const y = e.clientY - (rect.top + rect.height / 2);
+        const angle = Math.atan2(y, x);
+        const moveX = Math.cos(angle) * 10;
+        const moveY = Math.sin(angle) * 10;
+        pupil.style.transform = `translate(${moveX}px, ${moveY}px)`;
+    });
+});
+
+/* WHISPERS */
+const whispers = [
+    "ne menj el",
+    "ő lát téged",
+    "ez kölcsönös volt",
+    "már késő",
+    "miért nézel vissza",
+    "iguána = te",
+    "maradj"
+];
+
+function createWhisper() {
+    const w = document.createElement("div");
+    w.className = "whisper";
+    w.innerText = whispers[Math.floor(Math.random()*whispers.length)];
+
+    w.style.left = Math.random()*100 + "vw";
+    w.style.top = Math.random()*100 + "vh";
+
+    document.body.appendChild(w);
+
+    setTimeout(()=>w.remove(),5000);
+}
+
+setInterval(createWhisper, 300);
+
+/* CHAOS MODE */
+function triggerChaos() {
+
+    document.body.classList.add("chaos");
+
+    // randomize text
+    document.querySelectorAll(".fragment").forEach(el=>{
+        el.innerText = "AZ IGUÁNA SZERET TÉGED";
+    });
+
+    // create DOM explosion
+    setInterval(()=>{
+        const d = document.createElement("div");
+        d.innerText = "🦎";
+        d.style.position = "fixed";
+        d.style.left = Math.random()*100+"vw";
+        d.style.top = Math.random()*100+"vh";
+        d.style.fontSize = (10+Math.random()*40)+"px";
+        document.body.appendChild(d);
+    },100);
+
+    // speech synthesis (if supported)
+    if ('speechSynthesis' in window) {
+        const msg = new SpeechSynthesisUtterance(
+            "Az iguána szeret téged. Ez kölcsönös. Ez elkerülhetetlen."
+        );
+        msg.rate = 0.8;
+        msg.pitch = 0.6;
+        speechSynthesis.speak(msg);
+    }
+}
+</script>
+
+</body>
+</html>
